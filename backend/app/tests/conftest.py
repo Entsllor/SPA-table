@@ -7,8 +7,17 @@ from sqlalchemy.ext.asyncio import AsyncSession, AsyncConnection
 
 from app.core.database import create_db_engine, Base, db_context
 from app.core.settings import settings
-from app.main import app
 from app.utils.dependencies import get_db
+from app import models
+from app.crud import Users
+from app.schemas.users import UserCreate
+
+from app.main import app
+
+DEFAULT_USER_PASS = "SomeUserPassword"
+DEFAULT_USER_EMAIL = "defaultUser@example.com"
+DEFAULT_USER_NAME = "SomeUserName"
+USER_CREATE_DATA = UserCreate(username=DEFAULT_USER_NAME, password=DEFAULT_USER_PASS, email=DEFAULT_USER_EMAIL)
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -45,3 +54,8 @@ async def client(db) -> TestClient:
     app.dependency_overrides[get_db] = lambda: db
     with TestClient(app) as test_client:
         yield test_client
+
+
+@pytest.fixture(scope="function")
+async def default_user(db) -> models.User:
+    yield await Users.create(**USER_CREATE_DATA.dict())

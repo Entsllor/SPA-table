@@ -4,8 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .core.settings import settings
 from .utils import dependencies
+from .routers import users
 
 app = FastAPI(dependencies=[Depends(dependencies.get_db)])
+app.include_router(users.router)
+
 
 app.add_middleware(
     CORSMiddleware,

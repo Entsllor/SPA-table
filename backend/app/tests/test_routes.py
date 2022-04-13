@@ -21,3 +21,17 @@ def test_registration_with_valid_data(client):
     assert response_data["email"] == DEFAULT_USER_EMAIL
     assert response.status_code == status.HTTP_201_CREATED
     assert DEFAULT_USER_PASS not in response.text
+
+
+def test_failed_registration_if_not_unique_username(default_user, client):
+    user_with_same_username = USER_CREATE_DATA.copy()
+    user_with_same_username.email = "ANOTHER" + DEFAULT_USER_EMAIL
+    response = client.post(USERS_ENDPOINT, json=user_with_same_username.dict())
+    assert response.status_code == status.HTTP_409_CONFLICT
+
+
+def test_failed_registration_if_not_unique_email(default_user, client):
+    user_with_same_email = USER_CREATE_DATA.copy()
+    user_with_same_email.username = "ANOTHER" + DEFAULT_USER_NAME
+    response = client.post(USERS_ENDPOINT, json=user_with_same_email.dict())
+    assert response.status_code == status.HTTP_409_CONFLICT

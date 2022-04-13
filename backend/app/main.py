@@ -1,9 +1,11 @@
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from .core.settings import settings
 
-app = FastAPI()
+from .core.settings import settings
+from .utils import dependencies
+
+app = FastAPI(dependencies=[Depends(dependencies.get_db)])
 
 app.add_middleware(
     CORSMiddleware,

@@ -57,3 +57,17 @@ class InstanceNotFound(BaseAppException):
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Failed to find this object"
     )
+
+
+class ExpectedUniqueEmail(BaseAppException):
+    as_http = HTTPException(
+        status_code=status.HTTP_409_CONFLICT,
+        detail="This email is already taken"
+    )
+
+
+class ExpectedUniqueUsername(BaseAppException):
+    as_http = HTTPException(
+        status_code=status.HTTP_409_CONFLICT,
+        detail="This username is already taken"
+    )

@@ -1,2 +1,3 @@
 from .users import User
-from .tokens import AccessToken
+from .access_tokens import AccessToken
+from .refresh_tokens import RefreshToken

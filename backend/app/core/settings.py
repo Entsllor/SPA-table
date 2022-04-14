@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "YOUR-SECRET_KEY"  # should delete default value
     ALLOWED_ORIGINS: list = ["https://localhost:3000", "http://localhost:3000"]
     ACCESS_TOKEN_EXPIRE_SECONDS: int = 60 * 20
+    REFRESH_TOKEN_EXPIRE_SECONDS: int = 60 * 60 * 24 * 30
     HASHING_SCHEMAS: list = ["bcrypt"]
 
     class Config:

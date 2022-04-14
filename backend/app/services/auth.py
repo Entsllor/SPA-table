@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 
 from app import models
-from app.crud import Users
+from app.crud import Users, AccessTokens, RefreshTokens
 from app.utils import exceptions
 from app.utils.options import GetOneOptions
 
@@ -30,3 +30,17 @@ async def get_user_by_access_token(token_body=Depends(oauth2_scheme), only_activ
     except exceptions.InstanceNotFound:
         raise exceptions.UserNotFoundError
     return user
+
+
+async def create_auth_token_pair(user_id: int) -> tuple[models.AccessToken, models.RefreshToken]:
+    access_token = await AccessTokens.create(user_id)
+    refresh_token = await RefreshTokens.create(user_id)
+    return access_token, refresh_token
+
+
+async def revoke_tokens(user_id: int, refresh_token_body: str) -> tuple[models.AccessToken, models.RefreshToken]:
+    try:
+        await RefreshTokens.get_valid_token(user_id=user_id, body=refresh_token_body)
+    except (JWTError, exceptions.InstanceNotFound):
+        raise exceptions.CredentialsException
+    return await create_auth_token_pair(user_id)

@@ -61,13 +61,13 @@ class InstanceNotFound(BaseAppException):
 
 class ExpectedUniqueEmail(BaseAppException):
     as_http = HTTPException(
-        status_code=status.HTTP_409_CONFLICT,
+        status_code=status.HTTP_400_BAD_REQUEST,
         detail="This email is already taken"
     )
 
 
 class ExpectedUniqueUsername(BaseAppException):
     as_http = HTTPException(
-        status_code=status.HTTP_409_CONFLICT,
+        status_code=status.HTTP_400_BAD_REQUEST,
         detail="This username is already taken"
     )

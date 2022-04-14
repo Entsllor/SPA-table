@@ -9,8 +9,8 @@ class Settings(BaseSettings):
     PORT: int = 8000
     HOST: str = "127.0.0.1"
     LOG_LEVEL: str = "debug"
-    DB_URL: str = "sqlite+aiosqlite:///db.sqlite3"
-    TEST_DB_URL: str = "sqlite+aiosqlite:///test_db.sqlite3"
+    DB_URL: str = f"sqlite+aiosqlite:///{BASE_PATH}/db.sqlite3"
+    TEST_DB_URL: str = f"sqlite+aiosqlite:///{BASE_PATH}/test_db.sqlite3"
     JWT_ALGORITHM: str = "HS256"
     SECRET_KEY: str = "YOUR-SECRET_KEY"  # should delete default value
     ALLOWED_ORIGINS: list = ["https://localhost:3000", "http://localhost:3000"]

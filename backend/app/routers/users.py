@@ -1,6 +1,7 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from app.schemas import users
 from app.crud import Users
+from app.utils.dependencies import get_current_active_user
 
 router = APIRouter(prefix="/users")
 
@@ -13,3 +14,8 @@ async def create_user(user: users.UserCreate):
 @router.get("/", response_model=list[users.UserPublic])
 async def read_users():
     return await Users.get_many()
+
+
+@router.get("/me", response_model=users.UserPrivate)
+async def read_user_me(user: users.User = Depends(get_current_active_user)):
+    return user

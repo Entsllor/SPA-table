@@ -1,5 +1,5 @@
 from app import models
-from .base import BaseCrudDB, create_instance
+from .base import BaseCrudDB, create_instance, update_by_query
 from datetime import datetime
 
 

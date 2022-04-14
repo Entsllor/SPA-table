@@ -39,6 +39,10 @@ class BaseCrudDB:
         query = self._delete.filter_by(**filters)
         return await delete_by_query(query)
 
+    async def update(self, filters: dict, new_values: dict):
+        query = self._update.filter_by(**filters).values(new_values)
+        return await update_by_query(query)
+
 
 def order_by_fields(query: Query, ordering_fields: Iterable[str]) -> Query:
     for ordering_field in ordering_fields:

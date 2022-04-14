@@ -7,10 +7,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, AsyncConnection
 
 from app.core.database import create_db_engine, Base, db_context
 from app.core.settings import settings
+from app.services.auth import create_auth_token_pair
 from app.utils.dependencies import get_db
 from app import models
-from app.crud import Users
+from app.crud import Users, AccessTokens, RefreshTokens
 from app.schemas.users import UserCreate
+from app.schemas.tokens import AuthTokensBodies
 
 from app.main import app
 
@@ -59,3 +61,10 @@ async def client(db) -> TestClient:
 @pytest.fixture(scope="function")
 async def default_user(db) -> models.User:
     yield await Users.create(**USER_CREATE_DATA.dict())
+
+
+@pytest.fixture(scope="function")
+async def token_pair(default_user, client) -> AuthTokensBodies:
+    access_token = await AccessTokens.create(user_id=default_user.id)
+    refresh_token = await RefreshTokens.create(user_id=default_user.id)
+    yield AuthTokensBodies(access_token=access_token.body, refresh_token=refresh_token.body)

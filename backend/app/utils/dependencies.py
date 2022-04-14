@@ -1,8 +1,12 @@
+from fastapi import Depends
+
+from app import models
 from app.core.database import async_session, AsyncSession, db_context
+from app.services.auth import oauth2_scheme, get_user_by_access_token
 
 
 async def get_db() -> AsyncSession:
-    """Open new db session and then save this session object
+    """Open a new db session and then save this session object
     as a context variable"""
     session = async_session()
     try:
@@ -16,3 +20,11 @@ async def get_db() -> AsyncSession:
         await session.commit()
     finally:
         await session.close()
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> models.User:
+    return await get_user_by_access_token(token_body=token, only_active=False)
+
+
+async def get_current_active_user(token: str = Depends(oauth2_scheme)) -> models.User:
+    return await get_user_by_access_token(token_body=token, only_active=True)

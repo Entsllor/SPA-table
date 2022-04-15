@@ -1,26 +1,21 @@
 import React from 'react';
-import logo from '../../logo.svg';
+import TableWrapper from '../table_wrapper/TableWrapper'
 import './App.css';
+import Header from "../header/Header";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <div className="App w-100">
+            <Header/>
+            <body className="container-fluid w-100">
+            <div className="row justify-content-center">
+                <div className="col col-12 col-lg-9">
+                    <TableWrapper/>
+                </div>
+            </div>
+            </body>
+        </div>
+    );
 }
 
 export default App;

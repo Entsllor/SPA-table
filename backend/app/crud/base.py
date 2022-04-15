@@ -51,7 +51,7 @@ def order_by_fields(query: Query, ordering_fields: Iterable[str]) -> Query:
         order = 'asc'
         if field_name.startswith('-'):
             order = 'desc'
-            field_name = field_name.removesuffix('-')
+            field_name = field_name.removeprefix('-')
         if field_name in available_field:
             query = query.order_by(text(f"{field_name} {order}"))
     return query
@@ -94,7 +94,7 @@ async def delete_by_query(q: Query):
 
 async def update_by_query(query: Query):
     query.execution_options(synchronize_session="fetch")
-    await get_session().execute(query)
+    return await get_session().execute(query)
 
 
 async def update_instance(instance, **values):

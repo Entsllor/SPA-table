@@ -27,18 +27,6 @@ async def test_create_table_row_with_default_time_value(db):
     assert table_row.date == datetime.now().date()  # don't run this test at midnight
 
 
-@pytest.fixture(scope="function")
-async def default_table_row(db) -> models.TableRow:
-    yield await crud.TableRows.create("default_table_row", quantity=5, distance=10)
-
-@pytest.fixture(scope="function")
-async def table(db) -> models.TableRow:
-    yield [
-        await crud.TableRows.create("row_1", quantity=1, distance=1),
-        await crud.TableRows.create("row_2", quantity=2, distance=3),
-        await crud.TableRows.create("row_3", quantity=2, distance=3),
-    ]
-
 @pytest.mark.asyncio
 async def test_update_table_row(db, default_table_row):
     new_row_name = "_test_update_table_row"

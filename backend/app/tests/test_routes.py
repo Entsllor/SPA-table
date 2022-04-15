@@ -4,8 +4,9 @@ import pytest
 from fastapi import status
 from pydantic import ValidationError
 
-from .conftest import DEFAULT_USER_PASS, DEFAULT_USER_NAME, DEFAULT_USER_EMAIL, USER_CREATE_DATA
+from .conftest import DEFAULT_USER_PASS, DEFAULT_USER_NAME, DEFAULT_USER_EMAIL, USER_CREATE_DATA, auth_header
 from ..crud import RefreshTokens, Users, AccessTokens
+from ..schemas import table_rows
 from ..schemas.tokens import AccessTokenOut
 
 USERS_ENDPOINT = "users/"
@@ -136,7 +137,102 @@ async def test_failed_get_private_user_data_expired_token(client, default_user):
     assert DEFAULT_USER_EMAIL not in response.text
 
 
+TableRowsUrl = "table/rows/"
+
+
 def test_failed_get_private_user_data_without_token(client, token_pair):
     response = client.get(USER_PRIVATE_DATA_URL)
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     assert DEFAULT_USER_EMAIL not in response.text
+
+
+def test_delete_table_row(db, access_token, default_table_row, client):
+    url = TableRowsUrl + str(default_table_row.id)
+    assert default_table_row in db
+    response = client.delete(url, headers=auth_header(access_token))
+    assert response.ok
+    assert default_table_row not in db
+
+
+def test_failed_delete_table_row_not_found(db, access_token, client):
+    url = TableRowsUrl + '999'
+    response = client.delete(url, headers=auth_header(access_token))
+    assert response.status_code == 404
+
+
+def test_get_table_row(db, default_table_row, client, access_token):
+    url = TableRowsUrl + str(default_table_row.id)
+    response = client.get(url, headers=auth_header(access_token))
+    assert response.ok
+    assert response.json()['id'] == default_table_row.id
+    assert response.json()['name'] == default_table_row.name
+
+
+def test_get_table_rows(table, client, access_token):
+    response = client.get(TableRowsUrl, headers=auth_header(access_token))
+    assert response.ok
+    assert isinstance(response.json(), list)
+    assert len(response.json()) == len(table)
+
+
+def test_get_table_rows_if_empty_table(db, client, access_token):
+    response = client.get(TableRowsUrl, headers=auth_header(access_token))
+    assert response.ok
+    assert isinstance(response.json(), list)
+    assert len(response.json()) == 0
+
+
+def test_get_table_rows_with_limit_and_offset(db, table, client, access_token):
+    response = client.get(TableRowsUrl + "?limit=2&offset=1", headers=auth_header(access_token))
+    assert response.ok
+    rows = response.json()
+    ids = [row['id'] for row in rows]
+    assert ids == [2, 3]
+
+
+def test_get_table_rows_with_limit_offset_and_ordering(db, table, client, access_token):
+    response = client.get(TableRowsUrl + "?limit=2&offset=1&ordering_fields=-name", headers=auth_header(access_token))
+    assert response.ok
+    rows = response.json()
+    ids = [row['id'] for row in rows]
+    assert ids == [2, 1]
+
+
+def test_post_table_row(client, access_token):
+    table_row_create_data = {"name": "_test_post_table_row", "distance": 10, "quantity": 5}
+    response = client.post(TableRowsUrl, json=table_row_create_data, headers=auth_header(access_token))
+    created_row = response.json()
+    print(response.text)
+    assert response.ok
+    table_rows.TableRow(**created_row)  # validate
+
+
+def test_patch_table_row(client, access_token, table, db):
+    url = TableRowsUrl + str(table[-1].id)
+    data = {"name": "_test_patch_table_row"}
+    response = client.patch(url, json=data, headers=auth_header(access_token))
+    assert response.ok
+    assert table[-1].name == data['name']
+
+
+def test_put_table_row(client, access_token, table):
+    url = TableRowsUrl + str(table[-1].id)
+    data = {"name": "_test_put_table_row", "distance": int(table[-1].distance + 10)}
+    response = client.put(url, json=data, headers=auth_header(access_token))
+    assert response.ok
+    assert table[-1].name == data['name']
+    assert table[-1].distance == data['distance']
+
+
+def test_failed_patch_table_row_not_found(client, access_token):
+    url = TableRowsUrl + str(999)
+    data = {"name": "_test_failed_patch_table_row_not_found"}
+    response = client.patch(url, json=data, headers=auth_header(access_token))
+    assert response.status_code == 404
+
+
+def test_failed_put_table_row_not_found(client, access_token):
+    url = TableRowsUrl + str(999)
+    data = {"name": "_test_failed_put_table_row_not_found"}
+    response = client.put(url, json=data, headers=auth_header(access_token))
+    assert response.status_code == 404

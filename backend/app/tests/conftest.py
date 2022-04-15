@@ -7,9 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, AsyncConnection
 
 from app.core.database import create_db_engine, Base, db_context
 from app.core.settings import settings
-from app.services.auth import create_auth_token_pair
 from app.utils.dependencies import get_db
-from app import models
+from app import models, crud
 from app.crud import Users, AccessTokens, RefreshTokens
 from app.schemas.users import UserCreate
 from app.schemas.tokens import AuthTokensBodies
@@ -20,6 +19,12 @@ DEFAULT_USER_PASS = "SomeUserPassword"
 DEFAULT_USER_EMAIL = "defaultUser@example.com"
 DEFAULT_USER_NAME = "SomeUserName"
 USER_CREATE_DATA = UserCreate(username=DEFAULT_USER_NAME, password=DEFAULT_USER_PASS, email=DEFAULT_USER_EMAIL)
+
+
+def auth_header(token: str | models.AccessToken) -> dict:
+    if not isinstance(token, str):
+        token = token.body
+    return {"Authorization": f"Bearer {token}"}
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -63,8 +68,26 @@ async def default_user(db) -> models.User:
     yield await Users.create(**USER_CREATE_DATA.dict())
 
 
+@pytest.fixture(scope='function')
+async def access_token(default_user) -> models.AccessToken:
+    yield await AccessTokens.create(user_id=default_user.id)
+
+
 @pytest.fixture(scope="function")
-async def token_pair(default_user, client) -> AuthTokensBodies:
-    access_token = await AccessTokens.create(user_id=default_user.id)
-    refresh_token = await RefreshTokens.create(user_id=default_user.id)
+async def token_pair(access_token, client) -> AuthTokensBodies:
+    refresh_token = await RefreshTokens.create(user_id=access_token.user_id)
     yield AuthTokensBodies(access_token=access_token.body, refresh_token=refresh_token.body)
+
+
+@pytest.fixture(scope="function")
+async def default_table_row(db) -> models.TableRow:
+    yield await crud.TableRows.create("default_table_row", quantity=5, distance=10)
+
+
+@pytest.fixture(scope="function")
+async def table(db) -> [models.TableRow]:
+    yield [
+        await crud.TableRows.create("row_1", quantity=1, distance=1),
+        await crud.TableRows.create("row_2", quantity=2, distance=2),
+        await crud.TableRows.create("row_3", quantity=3, distance=3),
+    ]

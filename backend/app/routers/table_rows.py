@@ -5,7 +5,7 @@ from ..utils.dependencies import get_many_options, get_current_active_user
 from ..schemas.table_rows import TableRowCreate, TableRow, TableRowUpdate
 from ..crud import TableRows
 
-router = APIRouter(prefix="/table/rows", dependencies=[])
+router = APIRouter(prefix="/table/rows", dependencies=[Depends(get_current_active_user)])
 
 
 @router.get("/", response_model=list[TableRow])

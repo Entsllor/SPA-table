@@ -3,5 +3,5 @@ export default interface TableRow {
     name: string;
     distance: number;
     quantity: number;
-    date: Date;
+    date: string;
 }

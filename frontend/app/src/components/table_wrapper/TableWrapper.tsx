@@ -19,9 +19,11 @@ const TableWrapper: React.FC = () => {
         }, [ordering, page]
     );
     return <div className="TableWrapper">
-        <div className="main-card-title">Main Table</div>
-        <TableInner handleOrdering={setOrdering} rows={rows}/>
-        <div className="d-flex flex-row justify-content-end">
+        <div className="card">
+            <div className="main-card-title">Main Table</div>
+            <TableInner handleOrdering={setOrdering} rows={rows}/>
+        </div>
+        <div className="d-flex flex-row justify-content-end mt-2">
             <Paginator page={page} setPage={setPage}/>
         </div>
     </div>

@@ -46,7 +46,7 @@ class BaseCrudDB:
 
 
 def order_by_fields(query: Query, ordering_fields: Iterable[str]) -> Query:
-    available_field = itertools.chain(*[fields.columns.keys() for fields in query.froms])
+    available_field = list(itertools.chain(*[fields.columns.keys() for fields in query.froms]))
     for field_name in ordering_fields:
         order = 'asc'
         if field_name.startswith('-'):

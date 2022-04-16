@@ -1,24 +1,67 @@
-import React, {useEffect, useState} from "react";
-import TableRow from "../../interfaces"
+import React, {MouseEvent} from "react";
+import {TableRow, IOrderingFields} from "../../interfaces"
 
-
-const TableInner: React.FC<{ rows: TableRow[] }> = (props) => {
-    const [ordering, setOrdering] = useState<"name" | "distance" | "quantity">("name");
+const TableInner: React.FC<{ rows: TableRow[], handleOrdering: CallableFunction }> = (props) => {
     let rows = props.rows;
 
-    useEffect(() => {
-        document.getElementsByClassName("TableWrapper")
-    });
+    const changeOrdering = (event: MouseEvent<HTMLButtonElement>) => {
+        let element = event.target as HTMLButtonElement;
+        let fieldName = element.name as "name" | "distance" | "quantity";
+        props.handleOrdering((oldOrdering: IOrderingFields) => {
+            let ordering = {...oldOrdering};
+            if (fieldName in ordering)
+                switch (ordering[fieldName]) {
+                    case true:
+                        ordering[fieldName] = false;
+                        props.handleOrdering(ordering);
+                        element.classList.remove("btn-success")
+                        element.classList.add("btn-danger")
+                        break
+                    default:
+                        delete ordering[fieldName]
+                        props.handleOrdering(ordering);
+                        element.classList.remove("btn-danger")
+                        break
+                } else {
+                ordering[fieldName] = true
+                props.handleOrdering(ordering);
+                element.classList.add("btn-success")
+            }
+        });
+    };
+
     return (
         <div className="Table">
             <div style={{overflowX: "auto"}}>
                 <table className="table">
                     <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Distance</th>
-                        <th>Quantity</th>
-                        <th>Date</th>
+                        <th>
+                            <button
+                                name="name"
+                                className="btn" onClick={(event) => changeOrdering(event)}>Name
+                            </button>
+                        </th>
+                        <th>
+                            <button
+                                name="distance"
+                                className="btn"
+                                onClick={(event) => changeOrdering(event)}>Distance
+                            </button>
+                        </th>
+                        <th>
+                            <button
+                                name="quantity"
+                                className="btn"
+                                onClick={(event) => changeOrdering(event)}>Quantity
+                            </button>
+                        </th>
+                        <th>
+                            <button
+                                name="quantity"
+                                className="btn">Date
+                            </button>
+                        </th>
                     </tr>
                     </thead>
                     <tbody>

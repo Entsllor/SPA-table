@@ -7,6 +7,7 @@ export interface TableRow {
 }
 
 export interface IOrderingFields {
+    id?: boolean,
     name?: boolean,
     distance?: boolean,
     quantity?: boolean

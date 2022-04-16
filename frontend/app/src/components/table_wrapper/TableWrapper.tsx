@@ -10,7 +10,7 @@ const TableWrapper: React.FC = () => {
     const [ordering, setOrdering] = useState<IOrderingFields>({})
     const [page, setPage] = useState<number>(1)
     const updateRows = async () => {
-        let response = await TableService.getRows(ordering, page);
+        let response = await TableService.getRows(ordering, page, 20);
         setRows(response.data)
     }
 

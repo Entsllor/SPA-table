@@ -6,7 +6,7 @@ const TableInner: React.FC<{ rows: TableRow[], handleOrdering: CallableFunction 
 
     const changeOrdering = (event: MouseEvent<HTMLButtonElement>) => {
         let element = event.target as HTMLButtonElement;
-        let fieldName = element.name as "name" | "distance" | "quantity";
+        let fieldName = element.name as "name" | "distance" | "quantity" | "id";
         props.handleOrdering((oldOrdering: IOrderingFields) => {
             let ordering = {...oldOrdering};
             if (fieldName in ordering)
@@ -38,6 +38,12 @@ const TableInner: React.FC<{ rows: TableRow[], handleOrdering: CallableFunction 
                     <tr>
                         <th>
                             <button
+                                name="id"
+                                className="btn" onClick={(event) => changeOrdering(event)}>ID
+                            </button>
+                        </th>
+                        <th>
+                            <button
                                 name="name"
                                 className="btn" onClick={(event) => changeOrdering(event)}>Name
                             </button>
@@ -57,16 +63,14 @@ const TableInner: React.FC<{ rows: TableRow[], handleOrdering: CallableFunction 
                             </button>
                         </th>
                         <th>
-                            <button
-                                name="quantity"
-                                className="btn">Date
-                            </button>
+                            <div className="btn">Date</div>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
                     {rows.map(value =>
                         <tr key={value.id}>
+                            <td>{value.id}</td>
                             <td>{value.name}</td>
                             <td>{value.distance}</td>
                             <td>{value.quantity}</td>

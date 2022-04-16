@@ -3,17 +3,21 @@ import {TableRow, IOrderingFields} from "../interfaces";
 import {api} from "./api";
 
 export default class TableService {
-    static async getRows(ordering: IOrderingFields = {}): Promise<AxiosResponse<TableRow[]>> {
-        let orderingParams = '';
+    static async getRows(ordering: IOrderingFields = {}, page?: number, pageSize = 10): Promise<AxiosResponse<TableRow[]>> {
+        let queryParams = '';
         if (ordering) {
             for (let [key, value] of Object.entries(ordering)) {
-                let queryParamValue = value? key : `-${key}`
-                orderingParams += `ordering_fields=${queryParamValue}&`
+                let queryParamValue = value ? key : `-${key}`
+                queryParams += `ordering_fields=${queryParamValue}&`
             }
+        }
+        if (page) {
+            queryParams += `offset=${(page - 1) * pageSize}&`
+            queryParams += `limit=${pageSize}&`
         }
 
         return api.get(
-            `table/rows/?${orderingParams}`,
+            `table/rows/?${queryParams}`,
             {
                 headers: {
                     "Authorization": `Bearer ${localStorage.getItem("JWT")}`

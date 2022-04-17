@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 8000
 
-ENTRYPOINT ["uvicorn", "app.main:app", "--host",  "0.0.0.0"]
+ENTRYPOINT ["/bin/sh", "/project/run.sh"]

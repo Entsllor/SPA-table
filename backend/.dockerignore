@@ -11,5 +11,8 @@
 !app/__init__.py
 !app/main.py
 !requirements.txt
+!migration
+!run.sh
+!alembic.ini
 
 **/__pycache__

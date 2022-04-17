@@ -7,12 +7,14 @@ from .settings import settings
 
 
 def create_db_engine(db_url):
-    check_same_thread = 'sqlite' not in db_url
+    connect_args = {}
+    if 'sqlite' in db_url:
+        connect_args["check_same_thread"] = False
     return create_async_engine(
         url=db_url,
         future=True,
         echo=True,
-        connect_args={"check_same_thread": check_same_thread}
+        connect_args=connect_args
     )
 
 

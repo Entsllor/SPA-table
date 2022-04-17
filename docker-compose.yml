@@ -4,9 +4,9 @@ services:
     image: postgres:14-alpine
     restart: always
     environment:
-      POSTGRES_USER: tableAdmin
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: tableAdmin
+      POSTGRES_USER: USERNAME
+      POSTGRES_PASSWORD: PASSWORD
+      POSTGRES_DB: TABLENAME
     volumes:
       - db-data:/var/lib/postgresql/data
 

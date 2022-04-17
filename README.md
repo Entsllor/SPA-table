@@ -21,3 +21,19 @@
 - Таблица должна содержать пагинацию
 
 Вся таблица должна работать без перезагрузки страницы.
+
+# Pre-requirements
+
+Перед запуском проекта необходимо установить переменные окружения
+в файле backend/app/.env
+
+```dotenv
+# backend/app/.env
+APP_DB_URL=postgresql+asyncpg://POSTGRES_USER:POSTGRES_PASSWORD@postgres:5432/POSTGRES_DB
+APP_SECRET_KEY=YOUR-SECRET-KEY
+```
+
+Порт "postgres" указывается в случае запуска проекта через docker-compose,
+в другом случае можно использовать localhost.
+
+В docker-compose.yml необходимо прописать соответствующие POSTGRES_DBб POSTGRES_PASSWORD, POSTGRES_USER

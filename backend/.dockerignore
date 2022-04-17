@@ -1,0 +1,15 @@
+**
+
+!app/core
+!app/crud
+!app/models
+!app/routers
+!app/schemas
+!app/services
+!app/tests
+!app/utils
+!app/__init__.py
+!app/main.py
+!requirements.txt
+
+**/__pycache__

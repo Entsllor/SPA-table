@@ -10,7 +10,7 @@ RUN npm install
 ADD app /app
 ADD run.sh .
 
-EXPOSE 8000
+EXPOSE 3000
 EXPOSE 35729
 
 ENTRYPOINT ["/bin/sh", "/app/run.sh"]

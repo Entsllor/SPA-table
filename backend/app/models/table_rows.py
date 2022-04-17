@@ -1,6 +1,6 @@
 from datetime import datetime
 from ..core.database import Base
-from sqlalchemy import Date, String, Integer, Column, DECIMAL
+from sqlalchemy import Date, String, Integer, Column
 
 
 class TableRow(Base):
@@ -9,4 +9,4 @@ class TableRow(Base):
     name = Column(String(length=255), index=True)
     date = Column(Date, index=True, default=datetime.now().date())
     quantity = Column(Integer)
-    distance = Column(DECIMAL(precision=7, scale=7))
+    distance = Column(Integer)

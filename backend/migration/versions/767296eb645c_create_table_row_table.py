@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('name', sa.String(length=255), nullable=True),
     sa.Column('date', sa.Date(), nullable=True),
     sa.Column('quantity', sa.Integer(), nullable=True),
-    sa.Column('distance', sa.DECIMAL(precision=7, scale=7), nullable=True),
+    sa.Column('distance', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_table_row_date'), 'table_row', ['date'], unique=False)

@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+  postgres:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: tableAdmin
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: tableAdmin
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    env_file:
+      - backend/app/.env
+    depends_on:
+      - postgres
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    stdin_open: true
+
+volumes:
+  db-data:

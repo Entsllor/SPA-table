@@ -14,7 +14,7 @@ async def test_create_table_row(db):
     table_row = await crud.TableRows.create(name=table_row_name, date=date_now, quantity=10, distance=15)
     assert isinstance(table_row, models.TableRow)
     assert table_row.distance == 15
-    assert isinstance(table_row.distance, Decimal)
+    assert isinstance(table_row.distance, int)
     assert table_row.name == table_row_name
     assert table_row.date == date_now
     assert table_row.quantity == 10

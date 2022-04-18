@@ -202,7 +202,6 @@ def test_post_table_row(client, access_token):
     table_row_create_data = {"name": "_test_post_table_row", "distance": 10, "quantity": 5}
     response = client.post(TableRowsUrl, json=table_row_create_data, headers=auth_header(access_token))
     created_row = response.json()
-    print(response.text)
     assert response.ok
     table_rows.TableRow(**created_row)  # validate
 

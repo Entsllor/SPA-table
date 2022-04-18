@@ -12,7 +12,7 @@ def get_optional_schema(base_model_class):
 class TableRowCreate(BaseModel):
     name: str
     date: datetime.date = None
-    distance: Decimal
+    distance: int
     quantity: int
 
     class Config:

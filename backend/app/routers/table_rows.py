@@ -9,8 +9,8 @@ router = APIRouter(prefix="/table/rows", dependencies=[Depends(get_current_activ
 
 
 @router.get("/", response_model=list[TableRow])
-async def read_table_rows(options: get_many_options = Depends()):
-    return await TableRows.get_many(_options=options)
+async def read_table_rows(options: get_many_options = Depends(), filter_by: str = None):
+    return await TableRows.search(condition=filter_by, options=options)
 
 
 @router.get("/{row_id}", response_model=TableRow)

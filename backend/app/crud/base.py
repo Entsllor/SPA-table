@@ -57,6 +57,44 @@ def order_by_fields(query: Query, ordering_fields: Iterable[str]) -> Query:
     return query
 
 
+FILTER_OPERATORS = {
+    "eq": "__eq__",  # ==
+    "ne": "__ne__",  # !=
+    "gt": "__gt__",  # <
+    "ge": "__ge__",  # <=
+    "lt": "__lt__",  # >
+    "le": "__le__",  # >=
+    "like": "like",  # Model.column.like as SQL like
+}
+
+
+def parse_condition(condition: str) -> tuple[str, str, str | list] | None:
+    try:
+        value_separator_index = condition.index(":")
+        value = condition[value_separator_index + 1:]
+        operator_separator_index = condition[:value_separator_index].rindex("__")
+        operator = condition[operator_separator_index + 2:value_separator_index]
+        field_name = condition[:operator_separator_index]
+    except (ValueError, IndexError):
+        raise ValueError(f"Condition '{condition}' is invalid")
+    if operator not in FILTER_OPERATORS:
+        raise ValueError(f"Condition operator '{operator}' if not allowed")
+    return field_name, operator, value
+
+
+def filter_by_condition(query: Query, condition: str, allowed_fields: dict) -> Query:
+    try:
+        field_name, operator_name, value = parse_condition(condition)
+    except ValueError:
+        return query
+    field = allowed_fields.get(field_name)
+    operation = FILTER_OPERATORS.get(operator_name)
+    criterion = getattr(field, operation, None)
+    if field and criterion:
+        return query.where(criterion(value))
+    return query
+
+
 async def get_many_by_query(query: Query, options: GetManyOptions | dict = None) -> list:
     if isinstance(options, dict):
         options = GetManyOptions(**options)

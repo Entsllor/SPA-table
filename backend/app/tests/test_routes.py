@@ -190,6 +190,38 @@ def test_get_table_rows_with_limit_and_offset(db, table, client, access_token):
     assert ids == [2, 3]
 
 
+def test_get_table_rows_where_id_eq_2(db, table, client, access_token):
+    response = client.get(TableRowsUrl + "?filter_by=id__eq:2", headers=auth_header(access_token))
+    assert response.ok
+    rows = response.json()
+    ids = [row['id'] for row in rows]
+    assert rows and all(id_ == 2 for id_ in ids)
+
+
+def test_get_table_rows_where_id_greate_or_equal_2(db, table, client, access_token):
+    response = client.get(TableRowsUrl + "?filter_by=id__ge:2", headers=auth_header(access_token))
+    assert response.ok
+    rows = response.json()
+    ids = [row['id'] for row in rows]
+    assert rows and all(id_ >= 2 for id_ in ids)
+
+
+def test_get_table_rows_where_quantity_lower_3(db, table, client, access_token):
+    response = client.get(TableRowsUrl + "?filter_by=quantity__lt:2", headers=auth_header(access_token))
+    assert response.ok
+    rows = response.json()
+    quantities = [row['quantity'] for row in rows]
+    assert rows and all(quantity < 3 for quantity in quantities)
+
+
+def test_get_table_rows_filtered_by_name(db, table, client, access_token):
+    response = client.get(TableRowsUrl + "?filter_by=name__like:%_3", headers=auth_header(access_token))
+    assert response.ok
+    rows = response.json()
+    names = [row['name'] for row in rows]
+    assert rows and all(name.endswith("_3") for name in names)
+
+
 def test_get_table_rows_with_limit_offset_and_ordering(db, table, client, access_token):
     response = client.get(TableRowsUrl + "?limit=2&offset=1&ordering_fields=-name", headers=auth_header(access_token))
     assert response.ok

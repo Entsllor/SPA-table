@@ -14,7 +14,7 @@ class RefreshTokenCRUD(BaseCrudDB):
 
     @staticmethod
     async def create_body() -> str:
-        return os.urandom(63).hex()[63]
+        return os.urandom(63).hex()[:63]
 
     async def create(self, user_id, expire_delta: int = None) -> models.RefreshToken:
         await delete_by_query(self._delete.where(self.model.user_id == user_id))

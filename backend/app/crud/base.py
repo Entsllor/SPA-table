@@ -85,16 +85,14 @@ def parse_condition(condition: str) -> tuple[str, str, str | list] | None:
 def filter_by_condition(query: Query, condition: str, allowed_fields: dict) -> Query:
     try:
         field_name, operator_name, value = parse_condition(condition)
-        field = allowed_fields.get(field_name)
-        operation = FILTER_OPERATORS.get(operator_name)
+        field = allowed_fields[field_name]
+        operation = FILTER_OPERATORS[operator_name]
         criterion = getattr(field, operation, None)
-        if isinstance(field.type, Integer):
+        if field and isinstance(field.type, Integer):
             value = int(value)
-    except ValueError:
+    except (ValueError, KeyError, AttributeError):
         return query
-    if field and criterion:
-        return query.where(criterion(value))
-    return query
+    return query.where(criterion(value))
 
 
 async def get_many_by_query(query: Query, options: GetManyOptions | dict = None) -> list:

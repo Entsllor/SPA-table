@@ -1,7 +1,7 @@
 import itertools
 from typing import Iterable
 
-from sqlalchemy import select, update, insert, delete, text
+from sqlalchemy import select, update, insert, delete, text, Integer
 from sqlalchemy.orm import Query
 
 from app.core.database import Base, get_session
@@ -85,11 +85,13 @@ def parse_condition(condition: str) -> tuple[str, str, str | list] | None:
 def filter_by_condition(query: Query, condition: str, allowed_fields: dict) -> Query:
     try:
         field_name, operator_name, value = parse_condition(condition)
+        field = allowed_fields.get(field_name)
+        operation = FILTER_OPERATORS.get(operator_name)
+        criterion = getattr(field, operation, None)
+        if isinstance(field.type, Integer):
+            value = int(value)
     except ValueError:
         return query
-    field = allowed_fields.get(field_name)
-    operation = FILTER_OPERATORS.get(operator_name)
-    criterion = getattr(field, operation, None)
     if field and criterion:
         return query.where(criterion(value))
     return query

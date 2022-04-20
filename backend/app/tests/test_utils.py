@@ -37,34 +37,44 @@ def test_query_str_is_a_sql_code():
     assert 'username' in query_str
 
 
+def is_queries_equal(query_1: Query, query_2: Query) -> bool:
+    return str(query_1) == str(query_2) and query_1.compile().params == query_2.compile().params
+
+
+def test_comparing_queries():
+    base_query: Query = sqlalchemy.select(User)
+    assert is_queries_equal(base_query.where(User.id == 1), add_filter(base_query, "id__eq:1", {"id": User.id}))
+    assert not is_queries_equal(base_query.where(User.id > 1), add_filter(base_query, "id__eq:1", {"id": User.id}))
+    assert not is_queries_equal(base_query.where(User.id == 2), add_filter(base_query, "id__eq:1", {"id": User.id}))
+    assert not is_queries_equal(base_query.where(User.email == 2), add_filter(base_query, "id__eq:1", {"id": User.id}))
+    assert not is_queries_equal(base_query, add_filter(base_query, "id__eq:1", {"id": User.id}))
+
+
 def test_filter_by_condition_with_int_value():
     base_query: Query = sqlalchemy.select(User)
-    assert str(base_query.where(User.id == 1)) == str(add_filter(base_query, "id__eq:1", {"id": User.id}))
-    assert str(base_query.where(User.id != 1)) == str(add_filter(base_query, "id__ne:1", {"id": User.id}))
-    assert str(base_query.where(User.id > 1)) == str(add_filter(base_query, "id__gt:1", {"id": User.id}))
-    assert str(base_query.where(User.id >= 1)) == str(add_filter(base_query, "id__ge:1", {"id": User.id}))
-    assert str(base_query.where(User.id < 1)) == str(add_filter(base_query, "id__lt:1", {"id": User.id}))
-    assert str(base_query.where(User.id <= 1)) == str(add_filter(base_query, "id__le:1", {"id": User.id}))
-    # testing tests
-    assert str(base_query.where(User.id > 1)) != str(add_filter(base_query, "id__eq:1", {"id": User.id}))
-    assert str(base_query) != str(add_filter(base_query, "id__eq:1", {"id": User.id}))
+    assert is_queries_equal(base_query.where(User.id == 1), add_filter(base_query, "id__eq:1", {"id": User.id}))
+    assert is_queries_equal(base_query.where(User.id != 1), add_filter(base_query, "id__ne:1", {"id": User.id}))
+    assert is_queries_equal(base_query.where(User.id > 1), add_filter(base_query, "id__gt:1", {"id": User.id}))
+    assert is_queries_equal(base_query.where(User.id >= 1), add_filter(base_query, "id__ge:1", {"id": User.id}))
+    assert is_queries_equal(base_query.where(User.id < 1), add_filter(base_query, "id__lt:1", {"id": User.id}))
+    assert is_queries_equal(base_query.where(User.id <= 1), add_filter(base_query, "id__le:1", {"id": User.id}))
 
 
 def test_filter_by_condition_with_str_value():
     query: Query = sqlalchemy.select(User)
     name_field = User.username
     fields = {"username": name_field}
-    assert str(query.where(name_field == "me")) == str(add_filter(query, "username__eq:me", fields))
-    assert str(query.where(name_field != "me")) == str(add_filter(query, "username__ne:me", fields))
-    assert str(query.where(name_field > "me")) == str(add_filter(query, "username__gt:me", fields))
-    assert str(query.where(name_field >= "me")) == str(add_filter(query, "username__ge:me", fields))
-    assert str(query.where(name_field < "me")) == str(add_filter(query, "username__lt:me", fields))
-    assert str(query.where(name_field <= "me")) == str(add_filter(query, "username__le:me", fields))
-    assert str(query.where(name_field.like("you"))) == str(add_filter(query, "username__like:you", fields))
-    assert str(query.where(name_field.like("%you"))) == str(add_filter(query, "username__like:%you", fields))
-    assert str(query.where(name_field.like("%you%"))) == str(add_filter(query, "username__like:%you%", fields))
-    assert str(query.where(name_field.like("%y_u%"))) == str(add_filter(query, "username__like:%y_u%", fields))
-    assert str(query.where(name_field.like("%y%u%"))) == str(add_filter(query, "username__like:%y%u%", fields))
+    assert is_queries_equal(query.where(name_field == "me"), add_filter(query, "username__eq:me", fields))
+    assert is_queries_equal(query.where(name_field != "me"), add_filter(query, "username__ne:me", fields))
+    assert is_queries_equal(query.where(name_field > "me"), add_filter(query, "username__gt:me", fields))
+    assert is_queries_equal(query.where(name_field >= "me"), add_filter(query, "username__ge:me", fields))
+    assert is_queries_equal(query.where(name_field < "me"), add_filter(query, "username__lt:me", fields))
+    assert is_queries_equal(query.where(name_field <= "me"), add_filter(query, "username__le:me", fields))
+    assert is_queries_equal(query.where(name_field.like("you")), add_filter(query, "username__like:you", fields))
+    assert is_queries_equal(query.where(name_field.like("%you")), add_filter(query, "username__like:%you", fields))
+    assert is_queries_equal(query.where(name_field.like("%you%")), add_filter(query, "username__like:%you%", fields))
+    assert is_queries_equal(query.where(name_field.like("%y_u%")), add_filter(query, "username__like:%y_u%", fields))
+    assert is_queries_equal(query.where(name_field.like("%y%u%")), add_filter(query, "username__like:%y%u%", fields))
 
 
 def test_failed_filter_not_allowed_field():

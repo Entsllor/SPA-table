@@ -25,7 +25,7 @@ const TableWrapper: React.FC = () => {
             <div className="main-card-title">Main Table</div>
             <TableInner handleOrdering={setOrdering} rows={rows}/>
         </div>
-        <div className="d-flex flex-row justify-content-between flex-wrap mt-2">
+        <div className="d-flex flex-wrap-reverse flex-row justify-content-between flex-wra gap-2 mt-2">
             <Paginator page={page} setPage={setPage}/>
             <Filter setFilter={setFilter}/>
         </div>

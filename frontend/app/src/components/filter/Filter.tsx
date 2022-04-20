@@ -6,7 +6,7 @@ const Filter: FC<{ setFilter: CallableFunction; }> = (props) => {
         let fieldName: string = (document.getElementById("select-filtering-field") as HTMLSelectElement).value;
         let operator: string = (document.getElementById("select-filtering-operator") as HTMLSelectElement).value;
         let value: string = (document.getElementById("input-filtering-value") as HTMLInputElement).value;
-        if (operator == "like" && !(value.startsWith("%") || value.endsWith("%"))) {
+        if (operator === "like" && !(value.startsWith("%") || value.endsWith("%"))) {
             value = `%${value}%`;
         }
         props.setFilter(`${fieldName}__${operator}:${value}`)

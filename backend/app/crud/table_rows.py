@@ -1,5 +1,5 @@
 from app import models
-from .base import BaseCrudDB, create_instance, filter_by_condition, get_many_by_query
+from .base import BaseCrudDB, create_instance, add_filter, get_many_by_query
 from datetime import datetime
 
 from ..utils.options import GetManyOptions
@@ -22,7 +22,7 @@ class TableRowsCRUD(BaseCrudDB):
     async def search(self, condition, options: GetManyOptions = None):
         query = self._select
         if condition:
-            query = filter_by_condition(query, condition, self.allowed_filters)
+            query = add_filter(query, condition, self.allowed_filters)
         return await get_many_by_query(query, options)
 
 

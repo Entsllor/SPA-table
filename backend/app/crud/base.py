@@ -82,7 +82,7 @@ def parse_condition(condition: str) -> tuple[str, str, str | list] | None:
     return field_name, operator, value
 
 
-def filter_by_condition(query: Query, condition: str, allowed_fields: dict) -> Query:
+def add_filter(query: Query, condition: str, allowed_fields: dict) -> Query:
     try:
         field_name, operator_name, value = parse_condition(condition)
         field = allowed_fields[field_name]

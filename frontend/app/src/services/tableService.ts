@@ -23,7 +23,7 @@ export default class TableService {
         if (filter) {
             queryParams += `filter_by=${filter}&`
         }
-
+        queryParams = encodeURI(queryParams)
         return api.get(
             `table/rows/?${queryParams}`,
             {

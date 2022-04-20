@@ -9,7 +9,9 @@ aiosqlite==0.17.0
 alembic==1.7.6
     # via -r requirements.in
 anyio==3.5.0
-    # via starlette
+    # via
+    #   httpcore
+    #   starlette
 asgiref==3.5.0
     # via uvicorn
 asyncpg==0.25.0
@@ -19,13 +21,18 @@ attrs==21.4.0
 bcrypt==3.2.0
     # via passlib
 certifi==2021.10.8
-    # via requests
+    # via
+    #   httpcore
+    #   httpx
+    #   requests
 cffi==1.15.0
     # via
     #   bcrypt
     #   cryptography
 charset-normalizer==2.0.12
-    # via requests
+    # via
+    #   httpx
+    #   requests
 click==8.0.3
     # via
     #   pip-tools
@@ -43,12 +50,19 @@ fastapi==0.73.0
 greenlet==1.1.2
     # via sqlalchemy
 h11==0.12.0
-    # via uvicorn
+    # via
+    #   httpcore
+    #   uvicorn
+httpcore==0.14.7
+    # via httpx
+httpx==0.22.0
+    # via -r requirements.in
 idna==3.3
     # via
     #   anyio
     #   email-validator
     #   requests
+    #   rfc3986
 iniconfig==1.1.1
     # via pytest
 mako==1.2.0
@@ -91,6 +105,8 @@ python-multipart==0.0.5
     # via -r requirements.in
 requests==2.27.1
     # via -r requirements.in
+rfc3986[idna2008]==1.5.0
+    # via httpx
 rsa==4.8
     # via python-jose
 six==1.16.0
@@ -99,7 +115,10 @@ six==1.16.0
     #   ecdsa
     #   python-multipart
 sniffio==1.2.0
-    # via anyio
+    # via
+    #   anyio
+    #   httpcore
+    #   httpx
 sqlalchemy==1.4.31
     # via
     #   -r requirements.in
